@@ -1,19 +1,19 @@
 const {
-    create,
-    getAll,
-    getProductById,
-    getProductBySlug,
-    updateProduct,
-    deleteproduct,
-    getBestSellerProducts,
-    getNewlylaunchedProducts,
-    getMegaOfferProducts,
-    getProductsByCategory,
-    getRelatedProducts,
-    searchProducts,
+   createProductService,
+    getAllProductService,
+    getProductByIdService,
+    getProductBySlugService,
+    updateProductService,
+    deleteProductService,
+    getBestSellerProductsService,
+    getNewlylaunchedProductsService,
+    getMegaOfferProductsService,
+    getProductsByCategoryService,
+    getRelatedProductsService,
+    searchProductsService
 } = require("../services/services");
 
-const create = async (req, res) => {
+const createProduct = async (req, res) => {
     try {
 
         if (req.file) {
@@ -23,7 +23,7 @@ const create = async (req, res) => {
             req.body.images = req.files.images.map((file) => file.filename);
         }
 
-        const product = await create(req.body);
+        const product = await createProductService(req.body);
         res.status(201).json({
             success: true,
             message: "Product created successfully",
@@ -34,9 +34,9 @@ const create = async (req, res) => {
     }
 };
 
-const getAll = async (req, res) => {
+const getAllProducts = async (req, res) => {
     try{
-        const result = await getAll(req.query);
+        const result = await getAllProductsService(req.query);
         res.status(200).json({
             success: true,
             data: result.products,
@@ -49,7 +49,7 @@ const getAll = async (req, res) => {
 
 const getProductById = async (req, res) => {
     try {
-        const product = await getProductById(req.params.id);
+        const product = await getProductByIdService(req.params.id);
         if (!product) {
             return res.status(404).json({
                 success: false,
@@ -64,7 +64,7 @@ const getProductById = async (req, res) => {
 
 const getProductBySlug = async (req, res) => {
     try {
-        const product = await getProductBySlug(req.params.slug);
+        const product = await getProductBySlugService(req.params.slug);
         if (!product) {
             return res.status(404).json({
                 success: false,
@@ -86,7 +86,7 @@ const updateProduct = async (req, res) => {
             req.body.images = req.files.images.map((file) => file.filename);
         }
 
-        const product = await updateProductStockService(req.params.id, req.body);
+        const product = await updateProductService(req.params.id, req.body);
         if (!product) {
             return res.status(404).json({
                 success: false,
@@ -103,9 +103,9 @@ const updateProduct = async (req, res) => {
     }
 };
 
-const deleteproduct = async (req, res) => {
+const deleteProduct = async (req, res) => {
     try {
-        const product = await deleteproduct(req.params.id);
+        const product = await deleteProductService(req.params.id);
         if (!product) {
             return res.status(404).json({
                 success: false,
@@ -124,7 +124,7 @@ const deleteproduct = async (req, res) => {
 const getBestSellerProducts = async (req, res) => {
     try{
         const { limit } = req.query;
-        const products = await getBestSellerProducts(limit);
+        const products = await getBestSellerProductsService(limit);
         res.status(200).json({ success: true, data: products });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
@@ -134,7 +134,7 @@ const getBestSellerProducts = async (req, res) => {
 const getNewlyLaunchedProducts = async (req,res) => {
     try{
         const { limit } = req.query;
-        const products = await getNewlylaunchedProducts(limit);
+        const products = await getNewlylaunchedProductsService(limit);
         res.status(200).json({ success: true, data: products });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
@@ -144,7 +144,7 @@ const getNewlyLaunchedProducts = async (req,res) => {
 const getMegaOfferProducts = async (req,res) => {
     try{
         const { limit } = req.query;
-        const products = await getMegaOfferProducts(limit);
+        const products = await getMegaOfferProductsService(limit);
         res.status(200).json({ success: true, data: products });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
@@ -153,7 +153,7 @@ const getMegaOfferProducts = async (req,res) => {
 
 const getProductsByCategory = async (req, res) => {
     try {
-        const result = await getProductsByCategory(
+        const result = await getProductsByCategoryService(
             req.params.categoryId,
             req.query
         );
@@ -170,7 +170,7 @@ const getProductsByCategory = async (req, res) => {
 const getRelatedProducts = async (req, res) => {
     try {
         const { limit } = req.query;
-        const products = await getRelatedProducts(req.params.Id, limit);
+        const products = await getRelatedProductsService(req.params.Id, limit);
         res.status(200).json({ success: true, data: products });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message});
@@ -186,7 +186,7 @@ const searchProducts = async (req, res) => {
                 message: "Search query is required",
             });
         }
-     const products = await searchProducts(q, limit);
+     const products = await searchProductsService(q, limit);
      res.status(200).json({ success: true, data: products });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
@@ -194,12 +194,12 @@ const searchProducts = async (req, res) => {
 };
 
 module.exports = {
-    create,
-    getAll,
+    createProduct,
+    getAllProducts,
     getProductById,
     getProductBySlug,
     updateProduct,
-    deleteproduct,
+    deleteProduct,
     getBestSellerProducts,
     getNewlyLaunchedProducts,
     getMegaOfferProducts,

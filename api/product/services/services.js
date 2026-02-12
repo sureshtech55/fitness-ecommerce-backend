@@ -1,14 +1,14 @@
 const Model = require("../model/model");
 const slugify = require("slugify");
 
-const create = async (data) => {
+const createProductService = async (data) => {
     if (data.title) {
         data.slug = slugify(data.title, { lower: true, strict: true });
     }
     return await Model.create(data);
 };
 
-const getAll = async (queryParams = {}) => {
+const getAllProductService = async (queryParams = {}) => {
     const {
         page = 1,
         limit = 10,
@@ -71,14 +71,14 @@ const getAll = async (queryParams = {}) => {
     };
 };
 
-const getProductById = async (id) => {
+const getProductByIdService = async (id) => {
     return await Product.findById(id)
         .populate("category", "name slug")
         .populate("subcategory", "name slug")
         .populate("brand", "name slug logo");   
 };
 
-const getProductBySlug = async (slug) =>
+const getProductBySlugService = async (slug) =>
 {
     return await Product.findOne({ slug })
     .populate("category","name slug")
@@ -86,7 +86,7 @@ const getProductBySlug = async (slug) =>
     .populate("brand","name slug logo");
 };
 
-const updateProduct = async (id, data) => {
+const updateProductService = async (id, data) => {
     if (data.title) {
         data.slug = slugify(data.title, { lower: true, strict: true });
     }
@@ -99,32 +99,32 @@ const updateProduct = async (id, data) => {
     .populate("brand", "name slug logo");
 };
 
-const deleteproduct = async (id) => {
+const deleteProductService = async (id) => {
     return await Product.findByIdAndDelete(id);
 };
 
-const getBestSellerProducts = async (limit = 10) => {
+const getBestSellerProductsService = async (limit = 10) => {
     return await Product.find({ isBestSeller: true, isActive: true })
     .populate("category", "name slug")
     .populate("brand", "name slug logo")
     .limit(Number(limit));
 };
 
-const getNewlylaunchedProducts = async (limit = 10) => {
+const getNewlylaunchedProductsService = async (limit = 10) => {
     return await Product.find({ isNewlyLaunched: true, isActive: true })
     .populate("category", "name slug")
     .populate("brand", "name slug logo")
     .limit(Number(limit));
 };
 
-const getMegaOfferProducts = async(limit = 10) => {
+const getMegaOfferProductsService = async(limit = 10) => {
   return await Product.find({ isMegaOffer: true, isActive: true })
     .populate("category", "name slug")
     .populate("brand", "name slug logo")
     .limit(Number(limit));
 };
 
-const getProductsByCategory = async (categoryId, queryParams = {}) => {
+const getProductsByCategoryService = async (categoryId, queryParams = {}) => {
 const  { page = 1, limit = 10, sort = "-createdAt" } = queryParams;
 const skip = (Number(page) - 1) * Number(limit);
 
@@ -148,7 +148,7 @@ const products = await Product.find({ category: categoryId, isActive: true })
     };
 };
 
-const getRelatedProducts = async (ProductId, limit = 6) => {
+const getRelatedProductsService = async (ProductId, limit = 6) => {
     const product = await Product.findById(productId);
     if (!product) return [];
 
@@ -176,7 +176,7 @@ const updateProductStockService = async (id, quantity, operation = "decrease") =
     return product;
 };
 
- const searchProducts = async(searchQuery, limit = 20) => {
+ const searchProductsService = async(searchQuery, limit = 20) => {
     return await Product.find({
         $text: { $search: searchQuery },
         isActive: true,
@@ -186,17 +186,17 @@ const updateProductStockService = async (id, quantity, operation = "decrease") =
  };
   
 module.exports = {
-    create,
-    getAll,
-    getProductById,
-    getProductBySlug,
-    updateProduct,
-    deleteproduct,
-    getBestSellerProducts,
-    getNewlylaunchedProducts,
-    getMegaOfferProducts,
-    getProductsByCategory,
-    getRelatedProducts,
+    createProductService,
+    getAllProductService,
+    getProductByIdService,
+    getProductBySlugService,
+    updateProductService,
+    deleteProductService,
+    getBestSellerProductsService,
+    getNewlylaunchedProductsService,
+    getMegaOfferProductsService,
+    getProductsByCategoryService,
+    getRelatedProductsService,
     updateProductStockService,
-    searchProducts
+    searchProductsService
 };

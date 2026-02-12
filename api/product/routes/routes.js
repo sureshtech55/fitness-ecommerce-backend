@@ -1,11 +1,11 @@
 const express = require("express");
 const {
-     create,
-    getAll,
+       createProduct,
+    getAllProducts,
     getProductById,
     getProductBySlug,
     updateProduct,
-    deleteproduct,
+    deleteProduct,
     getBestSellerProducts,
     getNewlyLaunchedProducts,
     getMegaOfferProducts,
@@ -25,10 +25,10 @@ router.get("/slug/:slug", getProductBySlug);
 router.get("/:id/related", getRelatedProducts);
 
 
-router.post("/", create);
-router.get("/", getAll);
+router.post("/", createProduct);
+router.get("/", getAllProducts);
 router.get("/:id", getProductById);
 router.put("/:id", updateProduct);
-router.delete("/:id", deleteproduct);
+router.delete("/:id", deleteProduct);
 
 module.exports = router;
