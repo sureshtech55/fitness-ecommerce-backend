@@ -72,12 +72,31 @@ const orderSchema = new mongoose.Schema(
       required: true,
     },
 
-    // Payment
-    paymentMethod: {
-      type: String,
-      enum: ["COD", "CARD", "UPI", "NETBANKING", "RAZORPAY"],
-      required: true,
-    },
+   paymentMethod: {
+  type: String,
+  enum: [
+    "COD",          // Cash on Delivery
+    "CARD",         // Debit / Credit Card
+    "UPI",          // Google Pay, PhonePe, Paytm
+    "NETBANKING",   // Internet Banking
+    "RAZORPAY",     // Razorpay Gateway
+
+    // 🔽 Extra options
+    "PAYTM",        // Paytm Wallet
+    "PHONEPE",      // PhonePe
+    "GPAY",         // Google Pay
+    "AMAZONPAY",    // Amazon Pay
+    "WALLET",       // Generic Wallet
+    "EMI",          // No-Cost / Bank EMI
+    "BNPL",         // Buy Now Pay Later
+    "STRIPE",       // Stripe Gateway
+    "PAYPAL",       // International Payments
+    "APPLEPAY",     // Apple Pay
+    "GOOGLEPAY",    // Google Pay (Card + UPI)
+  ],
+  required: true,
+},
+
     paymentResult: {
       transactionId: String,
       status: String,

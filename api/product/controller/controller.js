@@ -1,4 +1,5 @@
 const {
+<<<<<<< Updated upstream
    createProductService,
     getAllProductService,
     getProductByIdService,
@@ -12,6 +13,23 @@ const {
     getRelatedProductsService,
     searchProductsService
 } = require("../services/services");
+=======
+    create,
+    getAll,
+    getProductById,
+    getProductBySlug,
+    updateProduct,
+    deleteproduct,
+    getBestSellerProducts,
+    getNewlylaunchedProducts,
+    getMegaOfferProducts,
+    getProductsByCategory,
+    getRelatedProducts,
+    searchProducts,
+
+    
+} =  require("../services/services");
+>>>>>>> Stashed changes
 
 const createProduct = async (req, res) => {
     try {
@@ -192,6 +210,9 @@ const searchProducts = async (req, res) => {
         res.status(500).json({ success: false, message: error.message });
     }
 };
+
+
+
 
 module.exports = {
     createProduct,
