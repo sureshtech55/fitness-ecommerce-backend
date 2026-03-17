@@ -49,7 +49,7 @@ const getAllProductService = async (queryParams = {}) => {
 
     const skip = (Number(page) - 1) * Number(limit);
     
-    const products = await Product.find(filter)
+    const products = await Model.find(filter)
     .populate("category", "name slug")
     .populate("subcategory", "name slug")
     .populate("brand", "name slug logo")
@@ -57,7 +57,7 @@ const getAllProductService = async (queryParams = {}) => {
     .skip(skip)
     .limit(Number(limit));
 
-    const total = await Product.countDocuments(filter);
+    const total = await Model.countDocuments(filter);
 
     return {
         products,
@@ -72,7 +72,7 @@ const getAllProductService = async (queryParams = {}) => {
 };
 
 const getProductByIdService = async (id) => {
-    return await Product.findById(id)
+    return await Model.findById(id)
         .populate("category", "name slug")
         .populate("subcategory", "name slug")
         .populate("brand", "name slug logo");   
@@ -80,7 +80,7 @@ const getProductByIdService = async (id) => {
 
 const getProductBySlugService = async (slug) =>
 {
-    return await Product.findOne({ slug })
+    return await Model.findOne({ slug })
     .populate("category","name slug")
     .populate("subcategory","name slug")
     .populate("brand","name slug logo");
@@ -90,7 +90,7 @@ const updateProductService = async (id, data) => {
     if (data.title) {
         data.slug = slugify(data.title, { lower: true, strict: true });
     }
-    return await Product.findByIdAndUpdate(id, data, {
+    return await Model.findByIdAndUpdate(id, data, {
         new: true,
         runValidators: true,
     })
@@ -100,25 +100,25 @@ const updateProductService = async (id, data) => {
 };
 
 const deleteProductService = async (id) => {
-    return await Product.findByIdAndDelete(id);
+    return await Model.findByIdAndDelete(id);
 };
 
 const getBestSellerProductsService = async (limit = 10) => {
-    return await Product.find({ isBestSeller: true, isActive: true })
+    return await Model.find({ isBestSeller: true, isActive: true })
     .populate("category", "name slug")
     .populate("brand", "name slug logo")
     .limit(Number(limit));
 };
 
 const getNewlylaunchedProductsService = async (limit = 10) => {
-    return await Product.find({ isNewlyLaunched: true, isActive: true })
+    return await Model.find({ isNewlyLaunched: true, isActive: true })
     .populate("category", "name slug")
     .populate("brand", "name slug logo")
     .limit(Number(limit));
 };
 
 const getMegaOfferProductsService = async(limit = 10) => {
-  return await Product.find({ isMegaOffer: true, isActive: true })
+  return await Model.find({ isMegaOffer: true, isActive: true })
     .populate("category", "name slug")
     .populate("brand", "name slug logo")
     .limit(Number(limit));
@@ -128,14 +128,14 @@ const getProductsByCategoryService = async (categoryId, queryParams = {}) => {
 const  { page = 1, limit = 10, sort = "-createdAt" } = queryParams;
 const skip = (Number(page) - 1) * Number(limit);
 
-const products = await Product.find({ category: categoryId, isActive: true })
+const products = await Model.find({ category: categoryId, isActive: true })
   .populate("subcategory", "name slug")
   .populate("brand", "name slug logo")
   .sort(sort)
   .skip(skip)
   .limit(Number(limit));
 
-  const total = await Product.countDocuments({
+  const total = await Model.countDocuments({
     category: categoryId, isActive: true });
 
     return {
@@ -148,11 +148,11 @@ const products = await Product.find({ category: categoryId, isActive: true })
     };
 };
 
-const getRelatedProductsService = async (ProductId, limit = 6) => {
-    const product = await Product.findById(productId);
+const getRelatedProductsService = async (productId, limit = 6) => {
+    const product = await Model.findById(productId);
     if (!product) return [];
 
-    return await Product.find({
+    return await Model.find({
         _id: { $ne: productId },
         category: product.category,
         isActive: true,
@@ -162,7 +162,7 @@ const getRelatedProductsService = async (ProductId, limit = 6) => {
 };
 
 const updateProductStockService = async (id, quantity, operation = "decrease") => {
-    const product = await Product.findById(id);
+    const product = await Model.findById(id);
     if (!product) return null;
 
     if (operation === "decrease") {
@@ -177,7 +177,7 @@ const updateProductStockService = async (id, quantity, operation = "decrease") =
 };
 
  const searchProductsService = async(searchQuery, limit = 20) => {
-    return await Product.find({
+    return await Model.find({
         $text: { $search: searchQuery },
         isActive: true,
     })

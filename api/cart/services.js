@@ -1,7 +1,7 @@
 const Cart = require("../cart/model");
 
 const getUserCartService = async (userId) => {
-    return await Cart.findOne({ userId }).populate("cartItem.productId");
+    return await Cart.findOne({ userId }).populate("cartItems.productId");
 }; 
 
 const addToCartService = async (userId, productData) => {
@@ -10,7 +10,7 @@ const addToCartService = async (userId, productData) => {
     if (!cart) {
         cart = await Cart.create({
             userId,
-            cartItem: [productData],
+            cartItems: [productData],
             totalPrice: productData.price * productData.quantity,
             totalPriceAfterDiscount: 
             productData.price * productData.quantity - 
@@ -19,15 +19,15 @@ const addToCartService = async (userId, productData) => {
         return cart;
     }
 
-    const itemIndex = cart.cartItem.findIndex(
+    const itemIndex = cart.cartItems.findIndex(
         (item) =>
             item.productId.toString() === productData.productId.toString()
     );
 
    if (itemIndex > -1) {
-    cart.cartItem[itemIndex].quantity += productData.quantity;
+    cart.cartItems[itemIndex].quantity += productData.quantity;
    } else {
-    cart.cartItem.push(productData);
+    cart.cartItems.push(productData);
    }
 
    cart.totalPrice += productData.price * productData.quantity;
@@ -43,7 +43,7 @@ const removeFromCartService = async (userId, productId) => {
 
     if (!cart) return null;
 
-    cart.cartItem = cart.cartItem.filter(
+    cart.cartItems = cart.cartItems.filter(
         (item) => item.productId.toString() !== productId
     );
 

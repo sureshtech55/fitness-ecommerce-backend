@@ -1,23 +1,13 @@
-const Model = require("../model/Order.model");
+const Model = require("../order/model");
 
 // CREATE ORDER (invoice auto-generate)
 const create = async (body) => {
-  // auto invoice number
   body.invoiceNumber = `INV-${Date.now()}`;
-
   return await Model.create(body);
 };
 
 // ASSIGN DELIVERY PARTNER & TRACKING
 const assignDelivery = async (id, deliveryData) => {
-  /*
-    deliveryData = {
-      deliveryPartner,
-      trackingId,
-      expectedDeliveryDate
-    }
-  */
-
   return await Model.findByIdAndUpdate(
     id,
     {
@@ -61,6 +51,11 @@ const deleteone = async (id) => {
   return await Model.findByIdAndDelete(id);
 };
 
+// DELETE ALL ORDERS
+const deleteAll = async () => {
+  return await Model.deleteMany({});
+};
+
 module.exports = {
   create,
   assignDelivery,
@@ -69,4 +64,5 @@ module.exports = {
   update,
   updateExpectedDelivery,
   deleteone,
+  deleteAll,
 };

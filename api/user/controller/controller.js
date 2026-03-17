@@ -33,7 +33,7 @@ const createUser = async (req, res) => {
             });
         }
     res.status(500).json({ success: false,
-        message: error.messsage });
+        message: error.message });
     }
 };
 
@@ -249,7 +249,7 @@ const addToWishlist = async (req, res) => {
             data: user.wishlist,
         });
     } catch (error) {
-        res.status(500).json({ suucess: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message });
     }
 };
 
@@ -302,7 +302,7 @@ const toggleNewsletter = async (req, res) => {
                 message: "User not found",
             });
         }
-        response.status(200).json({
+        res.status(200).json({
             success: true,
             message: `Newsletter ${user.subscribedToNewsletter ? "subscribed" : "unsubcribed"} successfully`,
             data: { subscribedToNewsletter: user.subscribedToNewsletter },

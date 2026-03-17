@@ -1,33 +1,29 @@
-const jwt = require('jesonwebtoken');
-const user = require("../models/auth.model");
+const jwt = require('jsonwebtoken');
+const User = require("../models/auth.model");
 
-const authmiddleware = async(req, Res, next) =>{
-    try{
-       const authHeader = req.headers.authorization;
+const authMiddleware = async (req, res, next) => {
+    try {
+        const authHeader = req.headers.authorization;
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({
-        success: false,
-        message: "Access denied. Token missing."
-      });
-    }
-
-    const token = authHeader.split(" ")[1];
-
-
-
-        const secret = process.env.jwt_secret || 'changeme'
-        const decode = jwt.verify(token, secret);
-
-
-        const user = await user.findbyid(decode.id).select('-password');
-        if(!user){
-            return Res.status(401).json({
+        if (!authHeader || !authHeader.startsWith("Bearer ")) {
+            return res.status(401).json({
                 success: false,
-                message: 'user not found'
+                message: "Access denied. Token missing."
             });
         }
 
+        const token = authHeader.split(" ")[1];
+
+        const secret = process.env.JWT_SECRET || 'changeme';
+        const decoded = jwt.verify(token, secret);
+
+        const user = await User.findById(decoded.id).select('-password');
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
 
         req.user = {
             id: user._id,
@@ -36,40 +32,36 @@ const authmiddleware = async(req, Res, next) =>{
             role: user.role || 'user'
         };
 
-next();
+        next();
 
-
-    }
-    catch (err){
-return res.status(401).json({
-    success: false,
-    message: 'expire token'
-});
-    }
-    
-};
-
-const authorize = (...allowedrole) =>{
-return (req, res, next) =>{
-    if(!req.user) {
+    } catch (err) {
         return res.status(401).json({
             success: false,
-            message: "authanticataion require"
+            message: 'Invalid or expired token'
         });
     }
-
-    if(!allowedrole.includes(req.user.role)) {
-        return res.status(403).json({
-            success: false,
-            message: "Access denied. Insufficient permissions."
-        });
-    }
-    next();
-
 };
+
+const authorize = (...allowedRoles) => {
+    return (req, res, next) => {
+        if (!req.user) {
+            return res.status(401).json({
+                success: false,
+                message: "Authentication required"
+            });
+        }
+
+        if (!allowedRoles.includes(req.user.role)) {
+            return res.status(403).json({
+                success: false,
+                message: "Access denied. Insufficient permissions."
+            });
+        }
+        next();
+    };
 };
 
 module.exports = {
     authorize,
-    authmiddleware
-}
+    authMiddleware
+};

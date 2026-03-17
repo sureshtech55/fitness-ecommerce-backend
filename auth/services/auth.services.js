@@ -1,38 +1,36 @@
-const authservices = require("../models/auth.model");
+const User = require("../models/auth.model");
 const jwt = require("jsonwebtoken");
-  
 
-const generateuserid = async(userid) =>{
-    const secret = process.env.jwt_secret|| "changeme";
-    return jwt.sign({id: userid}, secret, {expiresIn: '30d'});
 
-    
+const generateToken = async (userId) => {
+    const secret = process.env.JWT_SECRET || "changeme";
+    return jwt.sign({ id: userId }, secret, { expiresIn: '30d' });
 };
 
-const registor = async({username,password,email,role}) =>{
-    const existing = await user.findOne({email});
-    if(existing) throw new error ('user allredy prasent');
-    const userdata = {email,password,role};
-     if (role&&['user','admin'].includes(role)){
-        userdata.role = role;
+const register = async ({ username, password, email, role }) => {
+    const existing = await User.findOne({ email });
+    if (existing) throw new Error('User already exists');
 
-     };
-     const user = user.create(userdata);
-     const token = generatetoken(user._id);
-     return{user,token};
-    
+    const userData = { username, email, password };
+    if (role && ['user', 'admin'].includes(role)) {
+        userData.role = role;
+    }
+
+    const user = await User.create(userData);
+    const token = await generateToken(user._id);
+    return { user, token };
 };
 
 
-const login = async({email,password}) =>{
-    const user = await user.findOne({email});
-    if (user) throw new error ('email not found');
-     const ismatch = await user.comparepassword(password);
-     if(!ismatch) throw new error('invailed password');
-     const token = generatetoken(user._id);
-     return {user,token};
+const login = async ({ email, password }) => {
+    const user = await User.findOne({ email });
+    if (!user) throw new Error('Email not found');
+
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) throw new Error('Invalid password');
+
+    const token = await generateToken(user._id);
+    return { user, token };
 };
 
-module.exports = {registor,login
-
-}
+module.exports = { register, login, generateToken };

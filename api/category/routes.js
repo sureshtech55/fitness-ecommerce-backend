@@ -10,14 +10,21 @@ const {
         deleteCategory,
 } = require("../category/controller");
 
+const { authMiddleware, authorize } = require("../middleware/auth");
+
 const router = express.Router();
 
-router.post("/", createCategory);
 router.get("/", getAllCategories);
 router.get("/active", getActiveCategories);
 router.get("/slug/:slug", getCategoryBySlug);
 router.get("/:id", getCategoryById);
 router.get("/:id/subcategories", getSubcategoriesByParent);
+
+// Protected Admin Routes
+router.use(authMiddleware);
+router.use(authorize("admin"));
+
+router.post("/", createCategory);
 router.put("/:id", updateCategory);
 router.delete("/:id", deleteCategory);
 

@@ -9,18 +9,39 @@ const userSchema = new mongoose.Schema(
       trim: true,
     },
 
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true
+    },
+
+    username: {
+      type: String,
+      trim: true,
+      unique: true,
+      sparse: true // Allow nulls for users who only have name
+    },
+
     email: {
       type: String,
       required: true,
       unique: true,
+      lowercase: true,
       trim: true,
+      match: [/^\S+@\S+\.\S+$/, "Please enter a valid email"]
     },
 
     password: {
       type: String,
       required: true,
       minlength: 6,
-      select: false, // hide password
+      select: false,
+      validate: {
+        validator: function (value) {
+          return /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]+$/.test(value);
+        },
+        message: "Password must contain at least 1 letter and 1 number"
+      }
     },
 
     passwordChangedAt: Date,
@@ -60,6 +81,7 @@ const userSchema = new mongoose.Schema(
         state: String,
         pincode: String,
         phone: String,
+        isDefault: { type: Boolean, default: false }
       },
     ],
   },
@@ -69,22 +91,15 @@ const userSchema = new mongoose.Schema(
 // 🔐 Hash password before save
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
-  this.password = await bcrypt.hash(this.password, 8);
-  next();
-});
-
-// 🔐 Hash password on update
-userSchema.pre("findOneAndUpdate", async function (next) {
-  if (this._update.password) {
-    this._update.password = await bcrypt.hash(this._update.password, 8);
-    this._update.passwordChangedAt = Date.now();
-  }
+  this.password = await bcrypt.hash(this.password, 10);
   next();
 });
 
 // 🔍 Compare password
-userSchema.methods.comparePassword = async function (password) {
-  return await bcrypt.compare(password, this.password);
+userSchema.methods.comparePassword = async function (enteredPassword) {
+  return await bcrypt.compare(enteredPassword, this.password);
 };
 
-module.exports = mongoose.model("User", userSchema);
+const User = mongoose.models.User || mongoose.model("User", userSchema);
+
+module.exports = User;
