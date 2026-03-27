@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require("../models/auth.model");
+const mongoose = require("mongoose");
 
 const authMiddleware = async (req, res, next) => {
     try {
@@ -13,9 +14,20 @@ const authMiddleware = async (req, res, next) => {
         }
 
         const token = authHeader.split(" ")[1];
-
         const secret = process.env.JWT_SECRET || 'changeme';
         const decoded = jwt.verify(token, secret);
+
+        // Simulation Mode: If DB is not connected, use mock user
+        if (mongoose.connection.readyState !== 1) {
+            console.warn("⚠️ MOCK AUTH: Bypassing database user lookup.");
+            req.user = {
+                id: decoded.id || "mock_id_123",
+                email: "demo@example.com",
+                username: "DemoUser",
+                role: 'user'
+            };
+            return next();
+        }
 
         const user = await User.findById(decoded.id).select('-password');
         if (!user) {

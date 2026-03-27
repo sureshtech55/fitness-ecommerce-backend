@@ -12,6 +12,7 @@ const {
     getProductsByCategory,
     getRelatedProducts,
     searchProducts,
+    approveProduct,
 } = require("../controller/controller");
 
 const { authMiddleware, authorize } = require("../../middleware/auth");
@@ -33,6 +34,7 @@ router.use(authMiddleware);
 router.use(authorize("admin"));
 
 router.post("/", createProduct);
+router.patch("/:id/approve", approveProduct);
 router.put("/:id", updateProduct);
 router.delete("/:id", deleteProduct);
 

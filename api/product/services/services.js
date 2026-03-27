@@ -1,5 +1,6 @@
 const Model = require("../model/model");
 const slugify = require("slugify");
+const mongoose = require("mongoose");
 
 const createProductService = async (data) => {
     if (data.title) {
@@ -9,6 +10,14 @@ const createProductService = async (data) => {
 };
 
 const getAllProductService = async (queryParams = {}) => {
+    // Check if DB is connected
+    if (mongoose.connection.readyState !== 1) {
+        console.warn("⚠️ MOCK PRODUCTS: No database connection.");
+        return {
+            products: [], // Frontend has its own fallbacks
+            pagination: { currentPage: 1, totalPages: 1, totalProducts: 0 }
+        };
+    }
     const {
         page = 1,
         limit = 10,

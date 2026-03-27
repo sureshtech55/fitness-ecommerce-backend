@@ -3,6 +3,7 @@ const {
   create,
   getone,
   getAll,
+  getMyOrders,
   update,
   assignDelivery,
   updateExpectedDeliveryDate,
@@ -17,6 +18,7 @@ const router = express.Router();
 router.use(authMiddleware);
 
 router.post("/", create);
+router.get("/my-orders", getMyOrders);
 router.get("/", getAll);
 router.get("/:id", getone);
 router.put("/:id", update);

@@ -140,6 +140,16 @@ const getNewlyLaunchedProducts = async (req, res) => {
     }
 };
 
+const getNewlyLaunchedProductsByLimit = async (req, res) => {
+    try {
+        const { limit } = req.query;
+        const products = await getNewlylaunchedProductsService(limit);
+        res.status(200).json({ success: true, data: products });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
 const getMegaOfferProducts = async (req, res) => {
     try {
         const { limit } = req.query;
@@ -192,6 +202,27 @@ const searchProducts = async (req, res) => {
     }
 };
 
+const approveProduct = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { isActive } = req.body;
+        
+        const Product = require("../model/model");
+        const product = await Product.findByIdAndUpdate(id, { isActive: isActive !== undefined ? isActive : true }, { new: true });
+        
+        if (!product) {
+            return res.status(404).json({ success: false, message: "Product not found" });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: `Product ${product.isActive ? 'approved' : 'disapproved'} successfully`,
+            data: product
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
 
 module.exports = {
     createProduct,
@@ -206,4 +237,5 @@ module.exports = {
     getProductsByCategory,
     getRelatedProducts,
     searchProducts,
+    approveProduct
 };

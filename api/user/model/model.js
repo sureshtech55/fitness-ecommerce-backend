@@ -24,24 +24,34 @@ const userSchema = new mongoose.Schema(
 
     email: {
       type: String,
-      required: true,
       unique: true,
+      sparse: true,
       lowercase: true,
       trim: true,
       match: [/^\S+@\S+\.\S+$/, "Please enter a valid email"]
     },
 
+    phone: {
+      type: String,
+      unique: true,
+      sparse: true,
+      trim: true
+    },
+
     password: {
       type: String,
-      required: true,
       minlength: 6,
       select: false,
-      validate: {
-        validator: function (value) {
-          return /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]+$/.test(value);
-        },
-        message: "Password must contain at least 1 letter and 1 number"
-      }
+    },
+
+    otp: {
+      type: String,
+      select: false,
+    },
+
+    otpExpires: {
+      type: Date,
+      select: false,
     },
 
     passwordChangedAt: Date,
@@ -81,6 +91,8 @@ const userSchema = new mongoose.Schema(
         state: String,
         pincode: String,
         phone: String,
+        landmark: String,
+        addressType: { type: String, enum: ['Home', 'Office', 'Other'], default: 'Home' },
         isDefault: { type: Boolean, default: false }
       },
     ],

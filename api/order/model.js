@@ -35,7 +35,6 @@ const orderSchema = new mongoose.Schema(
       },
     ],
 
-    // Address
     shippingAddress: {
       fullName: String,
       phone: Number,
@@ -48,6 +47,19 @@ const orderSchema = new mongoose.Schema(
         require: true,
         default: "India",
       },
+      landmark: String,
+      addressType: {
+        type: String,
+        enum: ["Home", "Office", "Other"],
+        default: "Home",
+      },
+    },
+
+    deliveryInstructions: String,
+    deliverySlot: String,
+    isExpressDelivery: {
+      type: Boolean,
+      default: false,
     },
 
     // Price Breakdown (Amazon style)

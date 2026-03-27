@@ -69,6 +69,26 @@ const getAll = async (req, res) => {
   }
 };
 
+// ================= GET MY ORDERS =================
+const getMyOrders = async (req, res) => {
+  try {
+    const userId = req.user ? req.user._id : "mock_user_id"; // handle mock auth
+    const data = await services.getMyOrders(userId);
+
+    res.status(200).json({
+      success: true,
+      count: data.length,
+      data,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      error: "Error fetching my orders",
+      details: err.message,
+    });
+  }
+};
+
 // ================= UPDATE ORDER (GENERIC) =================
 const update = async (req, res) => {
   try {
@@ -215,6 +235,7 @@ module.exports = {
   create,
   getone,
   getAll,
+  getMyOrders,
   update,
   assignDelivery,
   updateExpectedDeliveryDate,
